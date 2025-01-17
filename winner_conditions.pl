@@ -2,14 +2,16 @@
 %%%%%%%%%% On verifie si un joueur a gagné la partie %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-empty_board([['e','e','e','e','e','e'], 
-             ['e','e','e','e','e','e'], 
-             ['e','e','e','e','e','e'],
-             ['e','e','e','e','e','e'],
-             ['x','x','x','x','e','e'], 
-             ['e','e','e','e','e','e'],
-             ['e','e','e','e','e','e']]).
+% TO TEST THIS FILE: 
+/*
+trace, (winner([[z,_,z,z,_,_], 
+             	[z,z,_,z,_,_], 
+            	[z,_,z,_,_,_],
+             	[_,z,_,_,_,_],
+             	[z,_,_,_,_,_], 
+             	[_,_,_,_,_,_],
+             	[_,_,_,_,_,_]], player1)).
+*/
 
 % Les positions gangnats sur:
 %       - Une collone
@@ -59,42 +61,42 @@ winingColumn([_,_,III,IV,V,VI], Player) :-
 
 %       - Une ligne:
 winingRow([I,II,III,IV,_,_,_], Player) :-
-    I==II, II==III, III==IV, nonvar(Player).
+    I==II, II==III, III==IV, nonvar(Player),!.
 winingRow([_,II,III,IV,V,_,_], Player) :-
-    II==III, III==IV, IV==V, nonvar(Player).
+    II==III, III==IV, IV==V, nonvar(Player),!.
 winingRow([_,_,III,IV,V,VI,_], Player) :-
-    III==IV, IV==V, V==VI, nonvar(Player).
+    III==IV, IV==V, V==VI, nonvar(Player),!.
 winingRow([_,_,_,IV,V,VI,VII], Player) :-
-    IV==V, V==VI, VI==VII, nonvar(Player).
+    IV==V, V==VI, VI==VII, nonvar(Player),!.
 
 %       - Une diagonal descendant:
 winingInADiagonalDesc([[I,_,_,_,_,_],[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],_,_,_], Player) :-
-    I==II, II==III, III==IV, nonvar(Player).
+    I==II, II==III, III==IV, nonvar(Player),!.
 winingInADiagonalDesc([[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],_,_,_], Player) :-
-    II==III, III==IV, IV==V, nonvar(Player).
+    II==III, III==IV, IV==V, nonvar(Player),!.
 winingInADiagonalDesc([[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_,_,_,VI],_,_,_], Player) :-
-    III==IV, IV==V, V==VI , nonvar(Player).
+    III==IV, IV==V, V==VI , nonvar(Player),!.
 
 winingInADiagonalDesc([_,[I,_,_,_,_,_],[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],_,_], Player) :-
-    I==II, II==III, III==IV, nonvar(Player).
+    I==II, II==III, III==IV, nonvar(Player),!.
 winingInADiagonalDesc([_,[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],_,_], Player) :-
-    II==III, III==IV, IV==V, nonvar(Player).
+    II==III, III==IV, IV==V, nonvar(Player),!.
 winingInADiagonalDesc([_,[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_,_,_,VI],_,_], Player) :-
-    III==IV, IV==V, V==VI , nonvar(Player).
+    III==IV, IV==V, V==VI , nonvar(Player),!.
 
 winingInADiagonalDesc([_,_,[I,_,_,_,_,_],[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],_], Player) :-
-    I==II, II==III, III==IV, nonvar(Player).
+    I==II, II==III, III==IV, nonvar(Player),!.
 winingInADiagonalDesc([_,_,[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],_], Player) :-
-    II==III, III==IV, IV==V, nonvar(Player).
+    II==III, III==IV, IV==V, nonvar(Player),!.
 winingInADiagonalDesc([_,_,[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_,_,_,VI],_], Player) :-
-    III==IV, IV==V, V==VI , nonvar(Player).
+    III==IV, IV==V, V==VI , nonvar(Player),!.
 
 winingInADiagonalDesc([_,_,_,[I,_,_,_,_,_],[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_]], Player) :-
-    I==II, II==III, III==IV, nonvar(Player).
+    I==II, II==III, III==IV, nonvar(Player),!.
 winingInADiagonalDesc([_,_,_,[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_]], Player) :-
-    II==III, III==IV, IV==V, nonvar(Player).
+    II==III, III==IV, IV==V, nonvar(Player),!.
 winingInADiagonalDesc([_,_,_,[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_,_,_,VI]], Player) :-
-    III==IV, III==V, V==VI , nonvar(Player).
+    III==IV, III==V, V==VI , nonvar(Player),!.
 
 %       - Une diagonal ascendant:
 winingInADiagonalAsc(Board,Winner) :-
