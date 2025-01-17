@@ -29,6 +29,15 @@ square([_,_,_,M,_,_],4,M).
 square([_,_,_,_,M,_],5,M).
 square([_,_,_,_,_,M],6,M).
 
+playable_square(C,N) :-
+    findall(N, square(C, N, 'e'), L),
+    min_list(L,N)
+    .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% OUTPUT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %writes a square
 print_square(B, IC, IL) :-
 	column(B, IC, C),
@@ -86,3 +95,6 @@ write_square(M) :-
     write(M),
     write('  ')
     .
+
+
+    
