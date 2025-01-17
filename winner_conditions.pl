@@ -2,6 +2,15 @@
 %%%%%%%%%% On verifie si un joueur a gagné la partie %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+empty_board([['e','e','e','e','e','e'], 
+             ['e','e','e','e','e','e'], 
+             ['e','e','e','e','e','e'],
+             ['e','e','e','e','e','e'],
+             ['x','x','x','x','e','e'], 
+             ['e','e','e','e','e','e'],
+             ['e','e','e','e','e','e']]).
+
 % Les positions gangnats sur:
 %       - Une collone
 winner(Board, Player) :-
@@ -17,7 +26,7 @@ winner(Board, Player) :-
 
 %       - Une diagonal ascendant
 winner(Board, Player) :-
-    winingInDiagonalAsc(Board, Player),!.
+    winingInADiagonalAsc(Board, Player),!.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% On verifie si un joueur a gagné la partie sur %%%%%%%%
@@ -73,7 +82,6 @@ winingInADiagonalDesc([_,[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,
 winingInADiagonalDesc([_,[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_,_,_,VI],_,_], Player) :-
     III==IV, IV==V, V==VI , nonvar(Player).
 
-
 winingInADiagonalDesc([_,_,[I,_,_,_,_,_],[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],_], Player) :-
     I==II, II==III, III==IV, nonvar(Player).
 winingInADiagonalDesc([_,_,[_,II,_,_,_,_],[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],_], Player) :-
@@ -90,4 +98,4 @@ winingInADiagonalDesc([_,_,_,[_,_,III,_,_,_],[_,_,_,IV,_,_],[_,_,_,_,V,_],[_,_,_
 
 %       - Une diagonal ascendant:
 winingInADiagonalAsc(Board,Winner) :-
-    reverse(Board, InversedBoard), winnerWithADescendingDiag(InversedBoard, Winner).
+    reverse(Board, InversedBoard), winingInADiagonalDesc(InversedBoard, Winner).
