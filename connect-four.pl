@@ -29,6 +29,16 @@ square([_,_,_,M,_,_],4,M).
 square([_,_,_,_,M,_],5,M).
 square([_,_,_,_,_,M],6,M).
 
+playable_square(C,N) :-
+    findall(N, square(C, N, 'e'), L),
+    min_list(L,N)
+    .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% OUTPUT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %Writes A square
 get_square(B,IC, IL, M) :-
     column(B, IC, C),
@@ -48,6 +58,17 @@ write_square(M) :-
     write(' '),
     write('  ')
     .
+
+
+playable_square(C,N) :-
+    findall(N, square(C, N, 'e'), L),
+    min_list(L,N)
+    .
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% OUTPUT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 print_square(B, IC, IL) :-
     get_square(B,IC, IL, M),
@@ -141,4 +162,3 @@ set_item2([_|T1], TargetCol, V, CurrentCol, [V|T2]) :-
 set_item2([H|T1], TargetCol, V, CurrentCol, [H|T2]) :-
     NewCol is CurrentCol + 1,
     set_item2(T1, TargetCol, V, NewCol, T2).
-
