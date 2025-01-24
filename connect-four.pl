@@ -156,3 +156,26 @@ set_item2([_|T1], TargetCol, V, CurrentCol, [V|T2]) :-
 set_item2([H|T1], TargetCol, V, CurrentCol, [H|T2]) :-
     NewCol is CurrentCol + 1,
     set_item2(T1, TargetCol, V, NewCol, T2).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Random AI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Search for available columns to play
+playable_column(Board, Column) :-
+    column(Board, Column, Col),
+    playable_square(Col, _).
+    
+
+available_columns(Board, ColumnsList) :-
+    findall(Column, (playable_column(Board, Column)), ColumnsList).
+
+
+%Choose a random number between te available columns to play
+random_column(Board, Column) :-
+    available_columns(Board, ColumnsList),
+    length(ColumnsList, Length),
+    random(0, Length, Index),
+    nth0(Index, ColumnsList, Column)
+    .
