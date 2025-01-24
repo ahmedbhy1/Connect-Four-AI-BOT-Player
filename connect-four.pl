@@ -86,6 +86,13 @@ make_move(human, P, B, B2) :-
     make_move(human,P,B,B2)
     .
 
+make_move(computer, P, B, B2) :-
+    random_column(B, CN),
+    empty_mark(E),
+    player_mark(P, M),
+    move(B,CN, M, B2), !
+    .  
+
 read_players :-
     nl,
     nl,
