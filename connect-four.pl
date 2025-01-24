@@ -3,6 +3,11 @@ empty_mark('e').
 empty_board([['e','e','e','e','e','e'], ['e','e','e','e','e','e'], ['e','e','e','e','e','e'],
              ['e','e','e','e','e','e'], ['e','e','e','e','e','e'], ['e','e','e','e','e','e'],
              ['e','e','e','e','e','e']]).
+player_mark(1, 'x').
+player_mark(2, 'o').
+
+next_player(1,2).
+next_player(2,1).
 
 %Test fact
 board([['o','x','e','e','e','e'],
@@ -34,36 +39,45 @@ playable_square(C,N) :-
     min_list(L,N)
     .
 
-play(B, IC, M, NB) :-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Main program
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+move(B, IC, M, B2) :-
     column(B, IC, C),
     playable_square(C,N),
-    replace_item(C, N, M, NC),
-    replace_item(B, IC, NC, NB)
+    replace_item(C, N, M, C2),
+    replace_item(B, IC, C2, B2)
 	.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% OUTPUT
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-%Writes A square
-get_square(B,IC, IL, M) :-
-    column(B, IC, C),
-    square(C, IL, M).
-
-
-write_square(M) :-
-    write('  '),
-    write(M),
-    write('  ')
+play(P, B) :-
+    print_board(B),
+    make_move(human, P, B, B2),
+	next_player(P, P2),
+    play(P2, B2)
     .
 
-%if the square contains a empty mark is empty
-write_square(M) :-
-    empty_mark(M),
-    write('  '),
-    write(' '),
-    write('  ')
+make_move(human, P, B, B2) :-
+    nl,
+    nl,
+    write('Player '),
+    write(P),
+    write(' move? '),
+    read(CN),
+    
+    column(B,CN,C),
+    empty_mark(E),
+    player_mark(P, M),
+    move(B,CN, M, B2), !
+    .
+    
+make_move(human, P, B, B2) :-
+    nl,
+    nl,
+    write('Please select a numbered column.'),
+    make_move(human,P,B,B2)
     .
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,8 +110,7 @@ print_line(B, PL) :-
 	print_square(B, 7, IL)
     .
 
-print_board :-
-    board(B),
+print_board(B) :-
     print_board(B, 1)
     .
 
@@ -115,6 +128,19 @@ print_board(B, ITH) :-
     print_board(B,NITH)
     .
 
+write_square(M) :-
+    write('  '),
+    write(M),
+    write('  ')
+    .
+
+%if the square contains a empty mark is empty
+write_square(M) :-
+    empty_mark(M),
+    write('  '),
+    write(' '),
+    write('  ')
+    .
 
 %if is playable square
 write_square(C,L, IC, M) :-
