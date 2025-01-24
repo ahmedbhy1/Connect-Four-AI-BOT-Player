@@ -5,13 +5,13 @@ empty_board([['e','e','e','e','e','e'], ['e','e','e','e','e','e'], ['e','e','e',
              ['e','e','e','e','e','e']]).
 
 %Test fact
-board([[1,1,'e','e','e','e'],
-       [2,2,2,2,'e','e'],
+board([['o','x','e','e','e','e'],
+       ['o','x','x','x','e','e'],
        ['e','e','e','e','e','e'],
-       [4,'e','e','e','e','e'],
-       [5,5,5,5,5,5],
-       [6,6,6,'e','e','e'],
-       [7,7,7,7,'e','e']]).
+       ['x','e','e','e','e','e'],
+       ['x','x','o','x','o','o'],
+       ['o','o','x','e','e','e'],
+       ['o','x','x','o','e','e']]).
 %---------------
 
 column([C,_,_,_,_,_,_], 1, C).
@@ -30,7 +30,7 @@ square([_,_,_,_,M,_],5,M).
 square([_,_,_,_,_,M],6,M).
 
 playable_square(C,N) :-
-    findall(N, square(C, N, 'e'), L),
+    findall(NE, square(C, NE, 'e'), L),
     min_list(L,N)
     .
 
@@ -42,7 +42,7 @@ playable_square(C,N) :-
 print_square(B, IC, IL) :-
 	column(B, IC, C),
     square(C, IL, M),
-    write_square(M)
+    write_square(C, IL, IC, M)
     .
 
 %prints a line from top
@@ -82,19 +82,24 @@ print_board(B, ITH) :-
     print_board(B,NITH)
     .
 
+%if is playable square
+write_square(C,L, IC, M) :-
+    playable_square(C,L),
+    write('  '),
+    write(IC),
+    write('  ')
+    .
+
 %if the square contains a empty mark is empty
-write_square(M) :-
+write_square(C, L, IC, M) :-
     empty_mark(M),
     write('  '),
     write(' '),
     write('  ')
     .
 
-write_square(M) :-
+write_square(C, L, IC, M) :-
     write('  '),
     write(M),
     write('  ')
     .
-
-
-    
