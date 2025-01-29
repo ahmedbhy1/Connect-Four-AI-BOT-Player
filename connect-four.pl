@@ -1,4 +1,4 @@
-%Test computer
+%Test 1-computer/human
 player(1, computer).
 player(2, human).
 
@@ -8,13 +8,13 @@ player_mark(2, 'o').
 maximizing('x').      %%% the player playing x is always trying to maximize the utility of the board position
 minimizing('o').     %%% the player playing o is always trying to minimize the utility of the board position
 
-board([['o','x','e','e','e','x'],
-       ['o','x','x','x','e','e'],
-       ['e','e','e','e','e','o'],
-       ['x','e','e','e','e','o'],
-       ['x','x','o','x','o','o'],
-       ['o','o','x','e','e','e'],
-       ['o','x','x','o','e','e']]).
+board([['x','e','e','e','e','e'],
+       ['x','x','x','e','e','e'],
+       ['x','e','e','e','e','e'],
+       ['e','e','e','e','e','e'],
+       ['e','e','e','e','e','e'],
+       ['e','e','e','e','e','e'],
+       ['e','e','e','e','e','e']]).
 %---------------
 
 % Each array on the matrix is a column of the board from bottom to top.
@@ -186,10 +186,14 @@ winingInAColumn([_|Rest], M) :-
     winingInAColumn(Rest, M).
 
 %       - Une ligne
+% Base case: Check the first row for a win.
 winingInARow([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], M) :-
-    winingRow([A,B,C,D,E,F,G], M),!.
-winingInARow([_|A1], [_,B1], [_,C1], [_,D1], [_,E1], [_,F1], [_,G1], M) :-
+    winingRow([A,B,C,D,E,F,G], M), !.
+
+% Recursive case: Remove the first row and check the next one.
+winingInARow([[_|A1], [_|B1], [_|C1], [_|D1], [_|E1], [_|F1], [_|G1]], M) :-
     winingInARow([A1, B1, C1, D1, E1, F1, G1], M).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% On define les positions gangnats pour: %%%%%%%%%%%%
@@ -202,10 +206,8 @@ winingColumn([_,M,M,M,M,_], M).
 winingColumn([_,_,M,M,M,M], M).
 
 %       - Une ligne:
-winingRow([M,M,M,M,_,_,_], M) .
-winingRow([_,M,M,M,M,_,_], M) .
-winingRow([_,_,M,M,M,M,_], M) .
-winingRow([_,_,_,M,M,M,M], M) .
+winingRow(Row, M) :-
+    append(_, [M,M,M,M|_], Row).
 
 %       - Une diagonal descendant:
 winingInADiagonalDesc([[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],_,_,_], M).
@@ -274,7 +276,7 @@ moves(B,L) :-
     not(winner(B,x)),                %%% if either player already won, then there are no available moves
     not(winner(B,o)),
     empty_mark(E),
-    findall(X,(board(B),column(B,X,C),square(C,6,S),empty_mark(S)),L).
+    findall(X,(column(B,X,C),square(C,6,S),empty_mark(S)),L),
     L \= []
     .
 
@@ -297,7 +299,8 @@ utility(B,U) :-
     .
 
 utility(B,U) :-
-    U = 0
+    U = 0,
+    !
     .
 
 
@@ -313,10 +316,27 @@ utility(B,U) :-
 % by simply selecting a random square.
 
 minimax(D,B,M,S,U) :-   
-    empty_board(E),
+    empty_board(B),
     random_int_1n(6,S),
     !
     .
+
+
+
+
+minimax(D,B,M,S,U) :-
+    winner(B,x),
+    utility(B,U),
+    !
+    .
+
+minimax(D,B,M,S,U) :-
+    winner(B,o),
+    utility(B,U),
+    !
+    .
+
+
 
 minimax(D,B,M,S,U) :-
     D2 is D + 1,
@@ -326,12 +346,13 @@ minimax(D,B,M,S,U) :-
     !
     .
 
+minimax(D,B,M,S,U) :-
+    utility(B,U)
+    .
+
 % if there are no more available moves, 
 % then the minimax value is the utility of the given board position
 
-minimax(D,B,M,S,U) :-
-    utility(B,U)      
-    .
 
 
 %.......................................
