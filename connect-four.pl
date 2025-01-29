@@ -76,9 +76,12 @@ move(B, IC, M, B2) :-
 
 play(P, B) :-
     print_board(B),
-    (   game_over(P, B) ->
-        true 
-    ;   make_move(human, P, B, B2),
+    make_move(human, P, B, B2),
+    (   game_over(P, B2) ->
+        write("game over Player: "),
+        write(P),
+        write(" win!")
+    ;   
         next_player(P, P2),
         play(P2, B2)
     ).
