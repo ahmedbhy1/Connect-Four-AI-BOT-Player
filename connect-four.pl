@@ -16,11 +16,26 @@ empty_mark('e').
 empty_board([['e','e','e','e','e','e'], ['e','e','e','e','e','e'], ['e','e','e','e','e','e'],
              ['e','e','e','e','e','e'], ['e','e','e','e','e','e'], ['e','e','e','e','e','e'],
              ['e','e','e','e','e','e']]).
+
+full_board([['x','x','x','x','x','x'], ['x','x','x','x','x','x'], ['x','x','x','x','x','x'],
+             ['x','x','x','x','x','x'], ['x','x','x','x','x','x'], ['x','x','x','x','x','x'],
+             ['x','x','x','x','x','x']]).
+
 player_mark(1, 'x').
 player_mark(2, 'o').
 
 next_player(1,2).
 next_player(2,1).
+
+%Test fact
+board([['o','x','e','e','e','e'],
+       ['o','x','x','x','e','e'],
+       ['e','e','e','e','e','e'],
+       ['x','e','e','e','e','e'],
+       ['x','x','o','x','o','o'],
+       ['o','o','x','e','e','e'],
+       ['o','x','x','o','e','e']]).
+%---------------
 
 column([C,_,_,_,_,_,_], 1, C).
 column([_,C,_,_,_,_,_], 2, C).
@@ -36,6 +51,9 @@ square([_,_,M,_,_,_],3,M).
 square([_,_,_,M,_,_],4,M).
 square([_,_,_,_,M,_],5,M).
 square([_,_,_,_,_,M],6,M).
+
+opponent_mark(1, 'o').  %%% shorthand for the inverse mark of the given player
+opponent_mark(2, 'x').
 
 playable_square(C,N) :-
     findall(NE, square(C, NE, 'e'), L),
@@ -59,11 +77,15 @@ move(B, IC, M, B2) :-
 
 play(P, B) :-
     print_board(B),
-    player(P,Type),
-    make_move(Type, P, B, B2),
-	next_player(P, P2),
-    play(P2, B2)
-    .
+    make_move(human, P, B, B2),
+    (   game_over(P, B2) ->
+        write("game over Player: "),
+        write(P),
+        write(" win!")
+    ;   
+        next_player(P, P2),
+        play(P2, B2)
+    ).
 
 make_move(human, P, B, B2) :-
     nl,
@@ -101,6 +123,93 @@ read_players :-
     set_players(N)
     .
 
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%% On verifie si un joueur a gagné la partie %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TO TEST THIS FILE: 
+/*
+trace, (
+([[z,_,z,z,_,_], 
+             	[z,z,_,z,_,_], 
+            	[z,_,z,_,_,_],
+             	[_,z,_,_,_,_],
+             	[z,_,_,_,_,_], 
+             	[_,_,_,_,_,_],
+             	[_,_,_,_,_,_]], player1)).
+*/
+
+% Les positions gangnats sur:
+%       - Une collone
+winner(Board, M) :-
+    winingInAColumn(Board, M),!.
+
+%       - Une ligne
+winner(Board, M) :-
+    winingInARow(Board, M),!.
+
+%       - Une diagonal descendant
+winner(Board, M) :-
+    winingInADiagonalDesc(Board, M),!.
+
+%       - Une diagonal ascendant
+winner(Board, M) :-
+    winingInADiagonalAsc(Board, M),!.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% On verifie si un joueur a gagné la partie sur %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%       - Une collone
+winingInAColumn([Column|_], M) :-
+    winingColumn(Column, M),!.
+winingInAColumn([_|Rest], M) :-
+    winingInAColumn(Rest, M).
+
+%       - Une ligne
+winingInARow([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], M) :-
+    winingRow([A,B,C,D,E,F,G], M),!.
+winingInARow([_|A1], [_,B1], [_,C1], [_,D1], [_,E1], [_,F1], [_,G1], M) :-
+    winingInARow([A1, B1, C1, D1, E1, F1, G1], M).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% On define les positions gangnats pour: %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%       - Une collone:
+
+winingColumn([M,M,M,M,_,_], M).
+winingColumn([_,M,M,M,M,_], M).
+winingColumn([_,_,M,M,M,M], M).
+
+%       - Une ligne:
+winingRow([M,M,M,M,_,_,_], M) .
+winingRow([_,M,M,M,M,_,_], M) .
+winingRow([_,_,M,M,M,M,_], M) .
+winingRow([_,_,_,M,M,M,M], M) .
+
+%       - Une diagonal descendant:
+winingInADiagonalDesc([[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],_,_,_], M).
+winingInADiagonalDesc([[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],_,_,_], M).
+winingInADiagonalDesc([[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],[_,_,_,_,_,M],_,_,_], M).
+winingInADiagonalDesc([_,[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],_,_], M).
+winingInADiagonalDesc([_,[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],_,_], M).
+winingInADiagonalDesc([_,[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],[_,_,_,_,_,M],_,_], M).
+
+winingInADiagonalDesc([_,_,[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],_], M).
+winingInADiagonalDesc([_,_,[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],_], M).
+winingInADiagonalDesc([_,_,[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],[_,_,_,_,_,M],_], M).
+winingInADiagonalDesc([_,_,_,[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_]], M).
+winingInADiagonalDesc([_,_,_,[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_]], M).
+winingInADiagonalDesc([_,_,_,[_,_,M,_,_,_],[_,_,_,M,_,_],[_,_,_,_,M,_],[_,_,_,_,_,M]], M).
+%       - Une diagonal ascendant:
+winingInADiagonalAsc(Board,M) :-
+    reverse(Board, InversedBoard), 
+    winingInADiagonalDesc(InversedBoard, M)
+    .
 
 %set_players(0) :- 
 %    asserta( player(1, computer) ),
@@ -249,24 +358,17 @@ set_item2([H|T1], TargetCol, V, CurrentCol, [H|T2]) :-
     set_item2(T1, TargetCol, V, NewCol, T2).
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% Random AI
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+game_over(P,B) :-
+    game_over2(P,B)
+    .
 
-%Search for available columns to play
-playable_column(Board, Column) :-
-    column(Board, Column, Col),
-    playable_square(Col, _).
-    
+game_over2(P, B) :-
+    player_mark(P,M),
+    winner(B, M)
+    .
 
-available_columns(Board, ColumnsList) :-
-    findall(Column, (playable_column(Board, Column)), ColumnsList).
-
-
-%Choose a random number between te available columns to play
-random_column(Board, Column) :-
-    available_columns(Board, ColumnsList),
-    length(ColumnsList, Length),
-    random(0, Length, Index),
-    nth0(Index, ColumnsList, Column)
+game_over2(P, B) :-
+    column(B,J,C),
+    empty_mark(E),
+    not(square(C,6,E))    %%% game is over if opponent wins
     .
