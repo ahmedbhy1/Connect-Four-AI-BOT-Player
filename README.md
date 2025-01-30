@@ -1,1 +1,1 @@
-# Puissance-4-PROLOG
+# Connect-Four-AI-BOT-Player
