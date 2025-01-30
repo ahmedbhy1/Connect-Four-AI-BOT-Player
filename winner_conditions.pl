@@ -8,12 +8,12 @@
 /*
 trace, (
 ([[z,_,z,z,_,_], 
-             	[z,z,_,z,_,_], 
-            	[z,_,z,_,_,_],
-             	[_,z,_,_,_,_],
-             	[z,_,_,_,_,_], 
-             	[_,_,_,_,_,_],
-             	[_,_,_,_,_,_]], player1)).
+  [z,z,_,z,_,_], 
+  [z,_,z,_,_,_],
+  [_,z,_,_,_,_],
+  [z,_,_,_,_,_], 
+  [_,_,_,_,_,_],
+  [_,_,_,_,_,_]], player1)).
 */
 
 % Les positions gangnats sur:
@@ -43,11 +43,14 @@ winingInAColumn([Column|_], M) :-
 winingInAColumn([_|Rest], M) :-
     winingInAColumn(Rest, M).
 
-%       - Une ligne
+% Base case: Check the first row for a win.
 winingInARow([[A|_], [B|_], [C|_], [D|_], [E|_], [F|_], [G|_]], M) :-
-    winingRow([A,B,C,D,E,F,G], M),!.
-winingInARow([_|A1], [_,B1], [_,C1], [_,D1], [_,E1], [_,F1], [_,G1], M) :-
+    winingRow([A,B,C,D,E,F,G], M), !.
+
+% Recursive case: Remove the first row and check the next one.
+winingInARow([[_|A1], [_|B1], [_|C1], [_|D1], [_|E1], [_|F1], [_|G1]], M) :-
     winingInARow([A1, B1, C1, D1, E1, F1, G1], M).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% On define les positions gangnats pour: %%%%%%%%%%%%
@@ -59,11 +62,9 @@ winingColumn([M,M,M,M,_,_], M).
 winingColumn([_,M,M,M,M,_], M).
 winingColumn([_,_,M,M,M,M], M).
 
-%       - Une ligne:
-winingRow([M,M,M,M,_,_,_], M) .
-winingRow([_,M,M,M,M,_,_], M) .
-winingRow([_,_,M,M,M,M,_], M) .
-winingRow([_,_,_,M,M,M,M], M) .
+winingRow(Row, M) :-
+    append(_, [M,M,M,M|_], Row).
+
 
 %       - Une diagonal descendant:
 winingInADiagonalDesc([[M,_,_,_,_,_],[_,M,_,_,_,_],[_,_,M,_,_,_],[_,_,_,M,_,_],_,_,_], M).
