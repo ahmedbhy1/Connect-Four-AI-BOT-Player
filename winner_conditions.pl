@@ -2,6 +2,8 @@
 %%%%%%%%%% On verifie si un joueur a gagné la partie %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+:- module(winner, [winner/2]).
+
 % TO TEST THIS FILE: 
 /*
 trace, (
