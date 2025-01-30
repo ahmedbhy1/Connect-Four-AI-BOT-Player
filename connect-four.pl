@@ -16,6 +16,50 @@ board([['x','e','e','e','e','e'],
        ['e','e','e','e','e','e'],
        ['e','e','e','e','e','e']]).
 %---------------
+%The utility points for each position in a board
+utilityboard([[3,4,5,5,4,3],
+       [4,6,7,7,6,4],
+       [5,8,11,11,8,5],
+       [7,10,13,13,10,7],
+       [5,8,11,11,8,5],
+       [4,6,7,7,6,4],
+       [3,4,5,5,4,3]]).
+
+
+%multiply 2 matrix
+m_mult_matr(M1, M2, M3) :- maplist(maplist(multiply), M1, M2, M3).
+multiply(X,Y,Z) :- Z is X*Y.
+
+%transform board into matrix of 0s and +-1s
+map_char('x', 1).
+map_char('o', -1).
+map_char('e', 0).
+
+transform_row([],[]).
+transform_row([Char|Rest],[Value|TransformedRest]):-
+    map_char(Char,Value),
+    transform_row(Rest, TransformedRest).
+
+transform_matrix([],[]).
+transform_matrix([Row|RestRows],[TransformedRow|TransformedRestRows]):-
+    transform_row(Row,TransformedRow),
+    transform_matrix(RestRows, TransformedRestRows).
+
+%sum of all elements in the matrix
+sum_list([], 0).
+sum_list([H|T], Sum) :-
+   sum_list(T, Rest),
+   Sum is H + Rest.
+
+flatten_matrix([],[]).
+flatten_matrix([Row|RestRows], Flattened) :-
+   flatten_matrix(RestRows, FlattenedRest),
+   append(Row, FlattenedRest, Flattened).
+
+matrix_sum(Matrix, Sum) :-
+    flatten_matrix(Matrix, Flattened),
+    sum_list(Flattened, Sum).
+
 
 % Each array on the matrix is a column of the board from bottom to top.
 empty_mark('e').
@@ -286,15 +330,24 @@ moves(B,L) :-
 % determines the value of a given board position
 %
 
+%computes the utility S for a specific board formation B
+utilitytest(B,S) :-
+    utilityboard(UB),
+    transform_matrix(B, B1), 
+    m_mult_matr(UB,B1, Res), 
+    matrix_sum(Res, S).
+
+
+
 utility(B,U) :-
     winner(B,'x'),
-    U = 1,
+    U = 1000,
     !
     .
 
 utility(B,U) :-
     winner(B,'o'),
-    U = (-1), 
+    U = (-1000), 
     !
     .
 
@@ -315,14 +368,18 @@ utility(B,U) :-
 % Save the user the trouble of waiting  for the computer to search the entire minimax tree 
 % by simply selecting a random square.
 
+
+minimax(D,B,M,S,U) :-   
+    D=3,
+    utilitytest(B,U),
+    !
+    .
+
 minimax(D,B,M,S,U) :-   
     empty_board(B),
     random_int_1n(6,S),
     !
     .
-
-
-
 
 minimax(D,B,M,S,U) :-
     winner(B,x),
@@ -590,10 +647,7 @@ game_over2(P, B) :-
     .
 
 game_over2(P, B) :-
-    column(B,J,C),
-    empty_mark(E),
-    not(square(C,6,E))    %%% game is over if opponent wins
-    .
+    forall((square(C, 6, E), empty_mark(E)), \+ column(B, J, C)).
 
 %.......................................
 % random_int_1n
