@@ -174,13 +174,35 @@ make_move2(computer, P, B, B2) :-
     write('.')
     .
 
-
 read_players :-
     nl,
     nl,
     write('Number of human players? '),
     read(N),
     set_players(N)
+    .
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Random AI
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Search for available columns to play
+playable_column(Board, Column) :-
+    column(Board, Column, Col),
+    playable_square(Col, _).
+    
+
+available_columns(Board, ColumnsList) :-
+    findall(Column, (playable_column(Board, Column)), ColumnsList).
+
+
+%Choose a random number between te available columns to play
+random_column(Board, Column) :-
+    available_columns(Board, ColumnsList),
+    length(ColumnsList, Length),
+    random(0, Length, Index),
+    nth0(Index, ColumnsList, Column)
     .
 
 
